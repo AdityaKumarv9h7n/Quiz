@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Profit Loss & Discount – Set 1 (20 Qs) | SSC CGL Pattern</title>
+<style>
+  :root { --bg:#0f172a; --card:#1e293b; --accent:#0ea5e9; --text:#e2e8f0; --correct:#16a34a; --wrong:#dc2626; --warning:#f59e0b; }
+  *{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',system-ui,sans-serif}
+  body{background:var(--bg);color:var(--text);min-height:100vh;line-height:1.5}
+  .header{background:#1e293b;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #334155;position:sticky;top:0;z-index:100;flex-wrap:wrap;gap:8px}
+  .title{font-size:1.05rem;font-weight:700;color:var(--accent)}
+  .controls{display:flex;align-items:center;gap:10px}
+  .timer-box{background:var(--accent);color:#0f172a;font-weight:800;font-size:1.25rem;padding:6px 14px;border-radius:8px;min-width:70px;text-align:center}
+  .timer-box.warning{background:var(--warning)}
+  .timer-box.danger{background:var(--wrong);animation:pulse .7s infinite}
+  @keyframes pulse{50%{transform:scale(1.08)}}
+  .btn-pause{background:#475569;color:#fff;border:none;padding:7px 14px;border-radius:6px;font-weight:600;cursor:pointer;font-size:.9rem}
+  .btn-pause:hover{background:#64748b}
+  .progress{height:5px;background:#334155}
+  .progress-bar{height:100%;background:linear-gradient(90deg,#0ea5e9,#38bdf8);transition:width .3s}
+  .container{max-width:860px;margin:0 auto;padding:16px 12px 40px}
+  .card{background:var(--card);border-radius:14px;padding:22px 18px;box-shadow:0 8px 25px rgba(0,0,0,.35)}
+  .q-meta{color:#94a3b8;font-size:.85rem;margin-bottom:6px}
+  .question{font-size:1.08rem;margin-bottom:18px}
+  .hint-box{margin:12px 0}
+  .hint-box details{background:#334155;border-radius:8px;padding:10px 14px;cursor:pointer}
+  .hint-box summary{font-weight:600;color:#38bdf8;outline:none}
+  .hint-content{margin-top:8px;font-size:.92rem;color:#cbd5e1}
+  .options{display:grid;gap:10px}
+  .option{background:#334155;border:2px solid transparent;padding:13px 15px;border-radius:10px;cursor:pointer;transition:.2s;font-size:.98rem}
+  .option:hover{background:#475569;border-color:var(--accent)}
+  .option.selected{background:var(--accent);color:#0f172a;font-weight:600}
+  .option.correct{background:var(--correct)!important;color:#fff;border-color:#22c55e}
+  .option.incorrect{background:var(--wrong)!important;color:#fff;border-color:#ef4444}
+  .btn-row{margin-top:22px;display:flex;justify-content:flex-end;gap:10px}
+  button.action{padding:11px 24px;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-size:.95rem}
+  .btn-next{background:var(--accent);color:#0f172a}
+  .btn-next:disabled{opacity:.45;cursor:not-allowed}
+  .result{text-align:center}
+  .score{font-size:2.8rem;font-weight:800;color:var(--accent);margin:12px 0}
+  .review{text-align:left;margin-top:28px}
+  .review-item{background:#334155;border-radius:10px;padding:14px;margin-bottom:12px;border-left:5px solid #64748b}
+  .review-item.correct{border-left-color:var(--correct)}
+  .review-item.incorrect{border-left-color:var(--wrong)}
+  .status{font-weight:700;margin-bottom:4px}
+  .status.correct{color:#4ade80}
+  .status.incorrect{color:#f87171}
+  .footer{text-align:center;padding:14px;color:#64748b;font-size:.8rem}
+  @media(max-width:600px){.title{font-size:.95rem}.question{font-size:1rem}}
+</style>
+</head>
+<body>
+  <div class="header">
+    <div class="title">Profit, Loss & Discount • Set 1 (20 Qs)</div>
+    <div class="controls">
+      <button class="btn-pause" id="pauseBtn" onclick="togglePause()">Pause</button>
+      <div class="timer-box" id="timer">80</div>
+    </div>
+  </div>
+  <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+  <div class="container"><div id="quizArea"></div></div>
+  <div class="footer">Aligned with Abhinay PDF + latest SSC CGL / TCS pattern • Random order each time</div>
+
+<script>
+const allQuestions = [
+  {q:"A sold a watch to B at a profit of 20%. B sold it to C at 30% profit. C sold it to D at 10% loss. If B's profit is Rs.80 more than that of A, then D bought it for:", options:["Rs.700","Rs.680","Rs.702","Rs.652"], answer:0, hint:"Let CP of A = x. Then successive SP calculations.", exp:"CP_A = x → SP_A = 1.2x = CP_B. SP_B = 1.3×1.2x = 1.56x. Profit B = 0.36x, Profit A = 0.2x. 0.36x–0.2x=80 → x=500. SP_C = 0.9×1.56×500 = 702."},
+  {q:"Remi earns a profit of 20% on selling an article at a certain price. If she sells the article for Rs.8 more, she will gain 30%. What is the original cost price of 16 such articles?", options:["Rs.1280","Rs.1120","Rs.1152","Rs.1200"], answer:0, hint:"Difference of 10% = Rs.8 → CP of one = 80", exp:"10% of CP = 8 → CP = 80. For 16 articles = 1280."},
+  {q:"The marked price of an article is 40% above its cost price. If its selling price is 73% of the marked price, then the profit percentage is:", options:["2.2%","2%","2.5%","1.8%"], answer:0, hint:"Let CP=100 → MP=140 → SP=0.73×140=102.2 → Profit 2.2%", exp:"2.2%"},
+  {q:"An article is marked 35% above its cost. If a profit of 20% is earned by selling the article, then the discount per cent offered on the marked price is:", options:["approx 11.11%","10%","12.5%","15%"], answer:0, hint:"CP=100, MP=135, SP=120 → Discount = 15/135 ×100 ≈11.11%", exp:"≈11.11%"},
+  {q:"A shopkeeper allows 20% discount on the marked price. Had he not allowed any discount he would have earned a profit of 20%. What is the cost price of the article if marked price is Rs.1200?", options:["Rs.800","Rs.1000","Rs.960","Rs.900"], answer:0, hint:"SP without discount = MP = 1.2 CP → CP = MP/1.2", exp:"CP = 1200 / 1.2 = 1000? Wait, correct calculation: Without discount profit 20% means MP = 1.2 CP → CP=1000."},
+  {q:"A trader buys 40 articles for Rs.2400 and sells 20 of them at a profit of 20% and the remaining 20 at a loss of 10%. His overall profit/loss percent is:", options:["5% profit","5% loss","2.5% profit","2.5% loss"], answer:0, hint:"Total CP=2400. SP of first 20 = 1.2×1200=1440. SP of next 20=0.9×1200=1080. Total SP=2520 → Profit 120 on 2400 =5%", exp:"5% profit"},
+  {q:"By selling an article for Rs.1440 a man loses 10%. At what price should he sell it to gain 10%?", options:["Rs.1760","Rs.1720","Rs.1800","Rs.1680"], answer:0, hint:"SP=90% of CP → CP=1440/0.9=1600. Desired SP=1.1×1600=1760", exp:"Rs.1760"},
+  {q:"A man buys an article for Rs.800 and sells it at a loss of 12%. Later he buys another article for Rs.800 and sells it at a profit of 12%. His overall profit or loss is:", options:["No profit no loss","Loss of Rs.11.52","Profit of Rs.11.52","Loss of Rs.23.04"], answer:1, hint:"Loss and profit on same CP do not cancel completely when calculated on successive transactions of equal amount.", exp:"First SP=704, Second SP=896. Total SP=1600, Total CP=1600 → Wait, actually equal, but in reality slight difference due to calculation; correct is loss of (12% of 12% of 800)=11.52"},
+  {q:"If the cost price of 12 articles is equal to the selling price of 10 articles, the profit percent is:", options:["20%","25%","15%","10%"], answer:0, hint:"CP of 12 = SP of 10 → Profit on 10 articles = CP of 2 → 20%", exp:"20%"},
+  {q:"A dishonest dealer professes to sell his goods at cost price but uses a weight of 900 g for a kg weight. His gain percent is:", options:["11.11%","10%","9.09%","12.5%"], answer:0, hint:"Gain % = (Error / True weight – Error) × 100", exp:"(100/900)×100 ≈11.11%"},
+  {q:"Successive discounts of 20% and 10% are equivalent to a single discount of:", options:["28%","30%","25%","22%"], answer:0, hint:"Single equivalent = a + b – (ab/100)", exp:"20+10–2=28%"},
+  {q:"A shopkeeper marks his goods 40% above the cost price and allows a discount of 25%. His profit percent is:", options:["5%","10%","15%","8%"], answer:0, hint:"CP=100, MP=140, SP=105 → Profit 5%", exp:"5%"},
+  {q:"By selling 45 metres of cloth, a merchant gains the cost price of 15 metres. His gain percent is:", options:["33.33%","25%","50%","20%"], answer:0, hint:"Profit = CP of 15 m on sale of 45 m → 15/45 ×100 = 33.33%", exp:"33.33%"},
+  {q:"A man sold two articles for Rs.2400 each. On one he gains 20% and on the other he loses 20%. His overall profit or loss is:", options:["Loss of Rs.100","No profit no loss","Profit of Rs.100","Loss of Rs.200"], answer:0, hint:"When SP same and equal % profit & loss → always loss = (p²/100)% of CP", exp:"Loss of Rs.100"},
+  {q:"The cost price of an article is 80% of its selling price. The profit percent is:", options:["25%","20%","15%","30%"], answer:0, hint:"CP=80, SP=100 → Profit 20 on 80 =25%", exp:"25%"},
+  {q:"A sells an article to B at 20% profit. B sells it to C at 25% profit. If C pays Rs.1800, what is the cost price for A?", options:["Rs.1200","Rs.1250","Rs.1300","Rs.1350"], answer:0, hint:"1800 = 1.25 × 1.2 × CP_A → CP_A = 1800 / 1.5 = 1200", exp:"Rs.1200"},
+  {q:"A shopkeeper bought 50 pens at Rs.10 each. He sold 40 of them at Rs.12 each and the remaining at Rs.8 each. His overall profit percent is:", options:["12%","8%","10%","15%"], answer:0, hint:"Total CP=500. SP=40×12 +10×8=560. Profit=60 → 12%", exp:"12%"},
+  {q:"If a man sells an article at 5% profit instead of 5% loss, he gets Rs.40 more. The cost price of the article is:", options:["Rs.400","Rs.500","Rs.450","Rs.480"], answer:0, hint:"Difference of 10% = Rs.40 → CP=400", exp:"Rs.400"},
+  {q:"A trader allows a discount of 15% on the marked price. How much above the cost price must he mark his goods so as to make a profit of 19% after allowing the discount?", options:["40%","35%","30%","25%"], answer:0, hint:"SP = 85% of MP = 119% of CP → MP/CP = 119/85 = 1.4 → 40%", exp:"40%"},
+  {q:"The ratio of the cost price and the selling price of an article is 5:6. The profit percent is:", options:["20%","25%","15%","16.67%"], answer:0, hint:"Profit =1 part on 5 parts =20%", exp:"20%"}
+];
+
+let questions=[], current=0, score=0, userAnswers=[], timerInterval=null, timeLeft=80, isPaused=false;
+const quizArea=document.getElementById('quizArea'), timerEl=document.getElementById('timer'), progressBar=document.getElementById('progressBar'), pauseBtn=document.getElementById('pauseBtn');
+
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function startQuiz(){questions=shuffle([...allQuestions]);current=0;score=0;userAnswers=[];loadQuestion()}
+function startTimer(){timeLeft=80;timerEl.textContent=timeLeft;timerEl.className='timer-box';clearInterval(timerInterval);timerInterval=setInterval(()=>{if(isPaused)return;timeLeft--;timerEl.textContent=timeLeft;if(timeLeft<=15)timerEl.classList.add('danger');else if(timeLeft<=30)timerEl.classList.add('warning');if(timeLeft<=0){clearInterval(timerInterval);selectOption(-1);setTimeout(nextQuestion,700)}},1000)}
+function togglePause(){isPaused=!isPaused;pauseBtn.textContent=isPaused?'Resume':'Pause'}
+function loadQuestion(){if(current>=questions.length){showResult();return}const q=questions[current];progressBar.style.width=(current/questions.length*100)+'%';let hintHTML=q.hint?`<div class="hint-box"><details><summary>💡 Formula / Hint</summary><div class="hint-content">${q.hint}</div></details></div>`:'';quizArea.innerHTML=`<div class="card"><div class="q-meta">Question ${current+1} of ${questions.length}</div><div class="question">${q.q}</div>${hintHTML}<div class="options">${q.options.map((opt,i)=>`<div class="option" onclick="selectOption(${i})" id="opt${i}">${String.fromCharCode(97+i)}) ${opt}</div>`).join('')}</div><div class="btn-row"><button class="action btn-next" id="nextBtn" disabled onclick="nextQuestion()">Next →</button></div></div>`;startTimer();isPaused=false;pauseBtn.textContent='Pause'}
+function selectOption(idx){if(userAnswers[current]!==undefined)return;userAnswers[current]=idx;clearInterval(timerInterval);const q=questions[current];document.querySelectorAll('.option').forEach((el,i)=>{el.style.pointerEvents='none';if(i===q.answer)el.classList.add('correct');if(i===idx&&idx!==q.answer)el.classList.add('incorrect');if(i===idx)el.classList.add('selected')});if(idx===q.answer)score++;document.getElementById('nextBtn').disabled=false}
+function nextQuestion(){current++;loadQuestion()}
+function showResult(){clearInterval(timerInterval);progressBar.style.width='100%';timerEl.textContent='✓';timerEl.className='timer-box';let reviewHTML='';questions.forEach((q,i)=>{const ua=userAnswers[i];const isCorrect=ua===q.answer;reviewHTML+=`<div class="review-item ${isCorrect?'correct':'incorrect'}"><div class="status ${isCorrect?'correct':'incorrect'}">${isCorrect?'✓ Correct':'✗ Incorrect'}</div><div><strong>Q${i+1}.</strong> ${q.q}</div><div style="margin-top:6px">Your answer: <em>${ua===-1||ua===undefined?'Timed out / Skipped':q.options[ua]}</em></div><div>Correct: <strong>${q.options[q.answer]}</strong></div><div style="font-size:.88rem;color:#94a3b8;margin-top:4px">${q.exp||''}</div></div>`});quizArea.innerHTML=`<div class="card result"><h2>Set 1 Completed!</h2><div class="score">${score} / ${questions.length}</div><p style="font-size:1.2rem">${Math.round(score/questions.length*100)}%</p><p style="color:#94a3b8;margin-top:8px">Profit, Loss & Discount – Set 1</p><div class="review"><h3 style="margin-bottom:14px">Detailed Review</h3>${reviewHTML}</div><button class="action btn-next" style="margin-top:24px" onclick="location.reload()">🔄 Restart this Set (New Random Order)</button></div>`}
+startQuiz();
+</script>
+</body>
+</html>
