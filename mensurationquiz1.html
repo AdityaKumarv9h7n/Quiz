@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Mensuration Quiz — Abhinay Maths CGL 2023</title>
+<style>
+  :root{
+    --bg:#1b1035;
+    --card:#2a1a4d;
+    --accent:#f4c430;
+    --accent2:#7c4dff;
+    --good:#2ecc71;
+    --bad:#e74c3c;
+    --text:#f5f3ff;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:'Segoe UI', Roboto, Arial, sans-serif;
+    background:linear-gradient(135deg,#1b1035,#3a1c66);
+    color:var(--text);
+    min-height:100vh;
+    padding:20px;
+  }
+  .wrap{
+    max-width:760px;
+    margin:0 auto;
+    position:relative;
+  }
+  h1{
+    text-align:center;
+    font-size:1.5rem;
+    margin-bottom:4px;
+    color:var(--accent);
+  }
+  .subtitle{
+    text-align:center;
+    font-size:0.9rem;
+    color:#cbb8ff;
+    margin-bottom:20px;
+  }
+  .timer-box{
+    position:fixed;
+    top:18px;
+    right:18px;
+    background:var(--card);
+    border:2px solid var(--accent);
+    border-radius:12px;
+    padding:10px 16px;
+    text-align:center;
+    min-width:90px;
+    box-shadow:0 4px 14px rgba(0,0,0,0.4);
+    z-index:50;
+  }
+  .timer-box .label{
+    font-size:0.65rem;
+    letter-spacing:1px;
+    color:#cbb8ff;
+    text-transform:uppercase;
+  }
+  .timer-box .time{
+    font-size:1.6rem;
+    font-weight:700;
+    color:var(--accent);
+  }
+  .timer-box.warn .time{ color:var(--bad); }
+
+  .card{
+    background:var(--card);
+    border-radius:16px;
+    padding:24px;
+    box-shadow:0 8px 24px rgba(0,0,0,0.35);
+    margin-bottom:20px;
+  }
+  .progress{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-size:0.85rem;
+    color:#cbb8ff;
+    margin-bottom:10px;
+  }
+  .progress-bar-outer{
+    background:#1b1035;
+    border-radius:8px;
+    height:8px;
+    overflow:hidden;
+    margin-bottom:18px;
+  }
+  .progress-bar-inner{
+    background:linear-gradient(90deg,var(--accent2),var(--accent));
+    height:100%;
+    width:0%;
+    transition:width .3s ease;
+  }
+  .qtext{
+    font-size:1.1rem;
+    line-height:1.5;
+    margin-bottom:20px;
+    white-space:pre-line;
+  }
+  .options{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  .option{
+    background:#3a2566;
+    border:2px solid transparent;
+    border-radius:10px;
+    padding:12px 16px;
+    cursor:pointer;
+    font-size:1rem;
+    transition:.15s;
+    text-align:left;
+  }
+  .option:hover{
+    border-color:var(--accent2);
+    background:#472e7a;
+  }
+  .option.selected{
+    border-color:var(--accent);
+    background:#553a8f;
+  }
+  .btn-row{
+    display:flex;
+    justify-content:flex-end;
+    margin-top:22px;
+    gap:10px;
+  }
+  button{
+    background:var(--accent);
+    color:#1b1035;
+    border:none;
+    border-radius:10px;
+    padding:12px 22px;
+    font-size:1rem;
+    font-weight:700;
+    cursor:pointer;
+    transition:.15s;
+  }
+  button:hover{ opacity:.88; }
+  button:disabled{
+    opacity:.4;
+    cursor:not-allowed;
+  }
+  #startScreen, #resultScreen{
+    text-align:center;
+  }
+  #startScreen p, #resultScreen p{
+    color:#dcd0ff;
+    line-height:1.6;
+  }
+  .score-big{
+    font-size:2.6rem;
+    color:var(--accent);
+    font-weight:800;
+    margin:10px 0;
+  }
+  .review-item{
+    background:#3a2566;
+    border-radius:12px;
+    padding:16px;
+    margin-bottom:12px;
+    border-left:6px solid var(--bad);
+  }
+  .review-item.correct{ border-left-color:var(--good); }
+  .review-item .qnum{
+    font-size:.75rem;
+    color:#cbb8ff;
+    text-transform:uppercase;
+    letter-spacing:1px;
+    margin-bottom:6px;
+  }
+  .review-item .qtxt{
+    margin-bottom:10px;
+    white-space:pre-line;
+  }
+  .review-item .ans-line{
+    font-size:.92rem;
+    margin:2px 0;
+  }
+  .tag{
+    display:inline-block;
+    padding:2px 10px;
+    border-radius:20px;
+    font-size:.72rem;
+    font-weight:700;
+    margin-left:8px;
+  }
+  .tag.correct{ background:var(--good); color:#0a2e17;}
+  .tag.incorrect{ background:var(--bad); color:#3a0a06;}
+  .tag.skipped{ background:#999; color:#222;}
+  .hidden{ display:none; }
+  .footer-note{
+    text-align:center;
+    font-size:.75rem;
+    color:#8f7cc4;
+    margin-top:10px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>📐 Mensuration Quiz</h1>
+  <div class="subtitle">20 Mensuration Questions · Abhinay Maths — CGL 2023 Pre (Most Expected Questions) · 80 sec/question</div>
+
+  <div class="timer-box hidden" id="timerBox">
+    <div class="label">Time Left</div>
+    <div class="time" id="timeLeft">80</div>
+  </div>
+
+  <!-- START SCREEN -->
+  <div class="card" id="startScreen">
+    <p>This quiz has <strong>20 mensuration questions</strong> (areas, volumes, surface areas, cones, cylinders, spheres, prisms & pyramids) picked from the Abhinay Maths "Most Expected Questions" set.</p>
+    <p>Each question has an <strong>80 second timer</strong>. If time runs out, the question is auto-marked as skipped and you move to the next one.</p>
+    <button id="startBtn">Start Quiz</button>
+  </div>
+
+  <!-- QUIZ SCREEN -->
+  <div class="card hidden" id="quizScreen">
+    <div class="progress">
+      <span id="qCounter">Question 1 / 20</span>
+      <span id="scoreLive">Score: 0</span>
+    </div>
+    <div class="progress-bar-outer"><div class="progress-bar-inner" id="progressBar"></div></div>
+    <div class="qtext" id="qtext"></div>
+    <div class="options" id="options"></div>
+    <div class="btn-row">
+      <button id="nextBtn" disabled>Next</button>
+    </div>
+  </div>
+
+  <!-- RESULT SCREEN -->
+  <div class="card hidden" id="resultScreen">
+    <h2>Quiz Complete 🎉</h2>
+    <div class="score-big" id="finalScore">0 / 20</div>
+    <p id="resultSummary"></p>
+    <button id="reviewBtn">Show Review</button>
+    <button id="restartBtn">Restart Quiz</button>
+  </div>
+
+  <div id="reviewList"></div>
+  <div class="footer-note">Source: Abhinay Maths — Most Expected Questions (Maths), CGL 2023 Pre</div>
+</div>
+
+<script>
+const QUESTIONS = [
+  {
+    q: "1. The areas of three adjacent faces of a cuboidal tank are 3 m², 12 m² and 16 m². The capacity of the tank, in litres, is:",
+    options: ["24000", "72000", "48000", "36000"],
+    correct: 0
+  },
+  {
+    q: "2. The curved surface area of a right cylinder is 3696 cm². Its height is three times its radius. What is the capacity (in litres) of the cylinder? (Take π = 22/7)",
+    options: ["19.008", "29.75", "25.872", "30.87"],
+    correct: 2
+  },
+  {
+    q: "3. The radius and height of a right circular cone are in the ratio 3 : 4. If its curved surface area (in cm²) is 240π, then its volume (in cm³) is:",
+    options: ["768π", "1536π", "2304π", "384π"],
+    correct: 0
+  },
+  {
+    q: "4. A spherical metallic shell with 6 cm external radius weighs 6688 g. What is the thickness of the shell if the density of metal is 10.5 g per cm³? (Take π = 22/7)",
+    options: ["2 cm", "4 cm", "2.5 cm", "3 cm"],
+    correct: 0
+  },
+  {
+    q: "5. The base of a right pyramid is a square of side 10 cm. If its height is 10 cm, then the area (in cm²) of its lateral surface is:",
+    options: ["100√5", "100(√5 + 1)", "50√5", "100"],
+    correct: 1
+  },
+  {
+    q: "6. The base of a right prism is a regular hexagon of side 5 cm. If its height is 12√3 cm, then its volume (in cm³) is:",
+    options: ["1800", "675", "1350", "900"],
+    correct: 1
+  },
+  {
+    q: "7. The sum of the radii of spheres A and B is 14 cm, the radius of A being larger than that of B. The difference between their surface areas is 112π. What is the ratio of the volumes of A and B?",
+    options: ["8 : 1", "27 : 8", "64 : 27", "125 : 64"],
+    correct: 1
+  },
+  {
+    q: "8. The area of the base of a right circular cone is 81π cm² and its height is 12 cm. What is the curved surface area (in cm²) of the cone?",
+    options: ["135π", "144π", "108π", "126π"],
+    correct: 0
+  },
+  {
+    q: "9. The radii of two right circular cylinders are in the ratio 3 : 2 and the ratio of their volumes is 27 : 16. What is the ratio of their heights?",
+    options: ["3 : 4", "8 : 9", "4 : 3", "9 : 8"],
+    correct: 0
+  },
+  {
+    q: "10. A solid metallic sphere of radius 15 cm is melted and recast into spherical balls of radius 3 cm each. What is the ratio of the surface area of the original sphere and the sum of the surface areas of all the balls?",
+    options: ["1 : 10", "5 : 27", "1 : 5", "3 : 40"],
+    correct: 2
+  },
+  {
+    q: "11. The height of a solid cylinder is 30 cm and the diameter of its base is 10 cm. Two identical conical holes each of radius 5 cm and height 12 cm are drilled out. What is the surface area (in cm²) of the remaining solid?",
+    options: ["430π", "230π", "120π", "330π"],
+    correct: 0
+  },
+  {
+    q: "12. A hemispherical tank full of water is emptied by a pipe at the rate of 7.7 litres per second. How much time (in hours) will it take to empty 2/3 part of the tank, if the internal radius of the tank is 10.5 m?",
+    options: ["175/2", "185/3", "175/3", "185/6"],
+    correct: 2
+  },
+  {
+    q: "13. If the radius of a sphere is increased by 2.5 decimetre (dm), then its surface area increases by 110 dm². What is the volume (in dm³) of the sphere? (Take π = 22/7)",
+    options: ["13/21", "4/7", "3/7", "11/21"],
+    correct: 3
+  },
+  {
+    q: "14. A solid metallic cuboid of dimensions 18 cm × 36 cm × 72 cm is melted and recast into 8 cubes of the same volume. What is the ratio of the total surface area of the cuboid to the sum of the lateral surface areas of all 8 cubes?",
+    options: ["7 : 12", "4 : 7", "2 : 3", "7 : 8"],
+    correct: 3
+  },
+  {
+    q: "15. The circumference of the base of a right circular cone is 44 cm and its height is 24 cm. The curved surface area (in cm²) of the cone is: (Take π = 22/7)",
+    options: ["440", "528", "572", "550"],
+    correct: 3
+  },
+  {
+    q: "16. A metallic solid spherical ball of radius 3 cm is melted and recast into three spherical balls. The radii of two of these balls are 2 cm and 1.5 cm. What is the surface area (in cm²) of the third ball?",
+    options: ["25π/4", "25π/2", "25π", "50π"],
+    correct: 2
+  },
+  {
+    q: "17. From a solid cylindrical wooden block of height 18 cm and radius 7.5 cm, a conical cavity of the same height and same radius is taken out. What is the total surface area (in cm²) of the remaining solid?",
+    options: ["326.25π", "416.25π", "472.5π", "270π"],
+    correct: 2
+  },
+  {
+    q: "18. What is the volume of the largest sphere that can be carved out of a wooden cube of sides 21 cm? (Take π = 22/7)",
+    options: ["3851 cm³", "4851 cm³", "6858 cm³", "5821 cm³"],
+    correct: 1
+  },
+  {
+    q: "19. The base of a right pyramid is an equilateral triangle with side 8 cm, and its height is 360√3 cm. The volume (in cm³) of the pyramid is:",
+    options: ["360√3", "480", "360", "240√3"],
+    correct: 1
+  },
+  {
+    q: "20. The volume of a solid right circular cylinder of height 8 cm is 392π cm³. Its curved surface area (in cm²) is:",
+    options: ["161π", "96π", "210π", "112π"],
+    correct: 3
+  }
+];
+
+const TIME_PER_Q = 80;
+let current = 0;
+let score = 0;
+let timer = null;
+let timeLeft = TIME_PER_Q;
+let selectedOption = null;
+let userAnswers = new Array(QUESTIONS.length).fill(null); // null = skipped, else index
+
+const startScreen = document.getElementById('startScreen');
+const quizScreen = document.getElementById('quizScreen');
+const resultScreen = document.getElementById('resultScreen');
+const timerBox = document.getElementById('timerBox');
+const timeLeftEl = document.getElementById('timeLeft');
+const qtextEl = document.getElementById('qtext');
+const optionsEl = document.getElementById('options');
+const qCounterEl = document.getElementById('qCounter');
+const scoreLiveEl = document.getElementById('scoreLive');
+const progressBar = document.getElementById('progressBar');
+const nextBtn = document.getElementById('nextBtn');
+const reviewList = document.getElementById('reviewList');
+
+document.getElementById('startBtn').addEventListener('click', startQuiz);
+document.getElementById('restartBtn').addEventListener('click', restartQuiz);
+document.getElementById('reviewBtn').addEventListener('click', showReview);
+nextBtn.addEventListener('click', () => goNext(false));
+
+function startQuiz(){
+  startScreen.classList.add('hidden');
+  quizScreen.classList.remove('hidden');
+  timerBox.classList.remove('hidden');
+  current = 0;
+  score = 0;
+  userAnswers = new Array(QUESTIONS.length).fill(null);
+  loadQuestion();
+}
+
+function restartQuiz(){
+  resultScreen.classList.add('hidden');
+  reviewList.innerHTML = '';
+  startQuiz();
+}
+
+function loadQuestion(){
+  selectedOption = null;
+  nextBtn.disabled = true;
+  const q = QUESTIONS[current];
+  qCounterEl.textContent = `Question ${current+1} / ${QUESTIONS.length}`;
+  scoreLiveEl.textContent = `Score: ${score}`;
+  progressBar.style.width = `${(current/QUESTIONS.length)*100}%`;
+  qtextEl.textContent = q.q;
+  optionsEl.innerHTML = '';
+  q.options.forEach((opt, idx) => {
+    const div = document.createElement('div');
+    div.className = 'option';
+    div.textContent = String.fromCharCode(97+idx) + ') ' + opt;
+    div.addEventListener('click', () => selectOption(idx, div));
+    optionsEl.appendChild(div);
+  });
+  startTimer();
+}
+
+function selectOption(idx, el){
+  document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedOption = idx;
+  nextBtn.disabled = false;
+}
+
+function startTimer(){
+  clearInterval(timer);
+  timeLeft = TIME_PER_Q;
+  timeLeftEl.textContent = timeLeft;
+  timerBox.classList.remove('warn');
+  timer = setInterval(() => {
+    timeLeft--;
+    timeLeftEl.textContent = timeLeft;
+    if(timeLeft <= 15){
+      timerBox.classList.add('warn');
+    }
+    if(timeLeft <= 0){
+      clearInterval(timer);
+      goNext(true);
+    }
+  }, 1000);
+}
+
+function goNext(timedOut){
+  clearInterval(timer);
+  const q = QUESTIONS[current];
+  if(!timedOut && selectedOption !== null){
+    userAnswers[current] = selectedOption;
+    if(selectedOption === q.correct) score++;
+  } else {
+    userAnswers[current] = null; // skipped / timed out with no selection
+  }
+  current++;
+  if(current < QUESTIONS.length){
+    loadQuestion();
+  } else {
+    finishQuiz();
+  }
+}
+
+function finishQuiz(){
+  quizScreen.classList.add('hidden');
+  timerBox.classList.add('hidden');
+  resultScreen.classList.remove('hidden');
+  document.getElementById('finalScore').textContent = `${score} / ${QUESTIONS.length}`;
+  const pct = Math.round((score/QUESTIONS.length)*100);
+  let msg = '';
+  if(pct >= 80) msg = "Excellent work! Mensuration is clearly your strength. 🏆";
+  else if(pct >= 55) msg = "Good attempt — a bit more formula practice and you'll be solid. 💪";
+  else msg = "Keep practicing area, volume & surface area formulas — you'll improve fast! 📚";
+  document.getElementById('resultSummary').textContent = msg;
+}
+
+function showReview(){
+  reviewList.innerHTML = '<h2 style="text-align:center;margin-top:10px;">Review</h2>';
+  QUESTIONS.forEach((q, i) => {
+    const userIdx = userAnswers[i];
+    const isCorrect = userIdx === q.correct;
+    const div = document.createElement('div');
+    div.className = 'review-item ' + (isCorrect ? 'correct' : '');
+    let tag = '';
+    if(userIdx === null){
+      tag = '<span class="tag skipped">SKIPPED</span>';
+    } else if(isCorrect){
+      tag = '<span class="tag correct">CORRECT</span>';
+    } else {
+      tag = '<span class="tag incorrect">INCORRECT</span>';
+    }
+    const userAnsText = userIdx === null ? 'No answer (time up)' : (String.fromCharCode(97+userIdx) + ') ' + q.options[userIdx]);
+    const correctAnsText = String.fromCharCode(97+q.correct) + ') ' + q.options[q.correct];
+    div.innerHTML = `
+      <div class="qnum">Question ${i+1} ${tag}</div>
+      <div class="qtxt">${q.q}</div>
+      <div class="ans-line">Your answer: <strong>${userAnsText}</strong></div>
+      <div class="ans-line">Correct answer: <strong>${correctAnsText}</strong></div>
+    `;
+    reviewList.appendChild(div);
+  });
+  reviewList.scrollIntoView({behavior:'smooth'});
+}
+</script>
+</body>
+</html>
