@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>SSC CGL Mensuration Master Quiz (60 Qs) • Random + Timer + Hints</title>
+<style>
+  :root {
+    --bg: #0f172a; --card: #1e293b; --accent: #0ea5e9; --text: #e2e8f0;
+    --correct: #16a34a; --wrong: #dc2626; --warning: #f59e0b;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
+  body { background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.5; }
+  .header {
+    background: #1e293b; padding: 12px 16px; display: flex; justify-content: space-between;
+    align-items: center; border-bottom: 2px solid #334155; position: sticky; top: 0; z-index: 100;
+    flex-wrap: wrap; gap: 8px;
+  }
+  .title { font-size: 1.05rem; font-weight: 700; color: var(--accent); }
+  .controls { display: flex; align-items: center; gap: 10px; }
+  .timer-box {
+    background: var(--accent); color: #0f172a; font-weight: 800; font-size: 1.25rem;
+    padding: 6px 14px; border-radius: 8px; min-width: 70px; text-align: center;
+  }
+  .timer-box.warning { background: var(--warning); }
+  .timer-box.danger { background: var(--wrong); animation: pulse 0.7s infinite; }
+  @keyframes pulse { 50% { transform: scale(1.08); } }
+  .btn-pause {
+    background: #475569; color: white; border: none; padding: 7px 14px;
+    border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 0.9rem;
+  }
+  .btn-pause:hover { background: #64748b; }
+  .progress { height: 5px; background: #334155; }
+  .progress-bar { height: 100%; background: linear-gradient(90deg, #0ea5e9, #38bdf8); transition: width .3s; }
+  .container { max-width: 860px; margin: 0 auto; padding: 16px 12px 40px; }
+  .card {
+    background: var(--card); border-radius: 14px; padding: 22px 18px;
+    box-shadow: 0 8px 25px rgba(0,0,0,.35);
+  }
+  .q-meta { color: #94a3b8; font-size: 0.85rem; margin-bottom: 6px; }
+  .question { font-size: 1.08rem; margin-bottom: 18px; }
+  .hint-box { margin: 12px 0; }
+  .hint-box details {
+    background: #334155; border-radius: 8px; padding: 10px 14px; cursor: pointer;
+  }
+  .hint-box summary { font-weight: 600; color: #38bdf8; outline: none; }
+  .hint-content { margin-top: 8px; font-size: 0.92rem; color: #cbd5e1; }
+  .options { display: grid; gap: 10px; }
+  .option {
+    background: #334155; border: 2px solid transparent; padding: 13px 15px;
+    border-radius: 10px; cursor: pointer; transition: .2s; font-size: 0.98rem;
+  }
+  .option:hover { background: #475569; border-color: var(--accent); }
+  .option.selected { background: var(--accent); color: #0f172a; font-weight: 600; }
+  .option.correct { background: var(--correct) !important; color: white; border-color: #22c55e; }
+  .option.incorrect { background: var(--wrong) !important; color: white; border-color: #ef4444; }
+  .btn-row { margin-top: 22px; display: flex; justify-content: flex-end; gap: 10px; }
+  button.action {
+    padding: 11px 24px; border: none; border-radius: 8px; font-weight: 700;
+    cursor: pointer; font-size: 0.95rem;
+  }
+  .btn-next { background: var(--accent); color: #0f172a; }
+  .btn-next:disabled { opacity: .45; cursor: not-allowed; }
+  .result { text-align: center; }
+  .score { font-size: 2.8rem; font-weight: 800; color: var(--accent); margin: 12px 0; }
+  .review { text-align: left; margin-top: 28px; }
+  .review-item {
+    background: #334155; border-radius: 10px; padding: 14px; margin-bottom: 12px;
+    border-left: 5px solid #64748b;
+  }
+  .review-item.correct { border-left-color: var(--correct); }
+  .review-item.incorrect { border-left-color: var(--wrong); }
+  .status { font-weight: 700; margin-bottom: 4px; }
+  .status.correct { color: #4ade80; }
+  .status.incorrect { color: #f87171; }
+  .footer { text-align: center; padding: 14px; color: #64748b; font-size: 0.8rem; }
+  @media (max-width: 600px) {
+    .title { font-size: 0.95rem; }
+    .question { font-size: 1rem; }
+    .option { padding: 12px; }
+  }
+</style>
+</head>
+<body>
+  <div class="header">
+    <div class="title">SSC CGL Mensuration • 60 Qs (Random)</div>
+    <div class="controls">
+      <button class="btn-pause" id="pauseBtn" onclick="togglePause()">Pause</button>
+      <div class="timer-box" id="timer">80</div>
+    </div>
+  </div>
+  <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+
+  <div class="container">
+    <div id="quizArea"></div>
+  </div>
+  <div class="footer">Aligned with latest TCS / SSC CGL pattern • Random order each time • 80s timer</div>
+
+<script>
+/* ========== 60 MENSURATION QUESTIONS (CGL PATTERN) ========== */
+const allQuestions = [
+  // From original PDF + standard CGL
+  {q:"The areas of three adjacent faces of a cuboidal tank are 3 m², 12 m² and 16 m². Capacity of the tank (in litres) is:", options:["24000","72000","48000","36000"], answer:0, hint:"Volume = √(ab × bc × ca)", exp:"√(3×12×16)=√576=24 m³=24000 L"},
+  {q:"Curved surface area of a right cylinder is 3696 cm². Height is 3 times radius. Capacity (litres) is (π=22/7):", options:["19.008","29.75","25.872","30.87"], answer:2, hint:"2πrh = CSA, h=3r → find r then V=πr²h", exp:"r=14, h=42 → V=25872 cm³=25.872 L"},
+  {q:"Radius and height of a right circular cone are in ratio 3:4. CSA = 240π cm². Volume is:", options:["768π","1536π","384π","2304π"], answer:0, hint:"l = √(r²+h²), CSA=πrl", exp:"k=4 → r=12, h=16 → V=768π"},
+  {q:"Radius of cylinder increased by 20% and height decreased by 30%. % change in volume:", options:["Decrease 2%","Increase 2%","Decrease 0.8%","Increase 0.8%"], answer:3, hint:"New V factor = (1.2)² × 0.7", exp:"1.44×0.7=1.008 → +0.8%"},
+  {q:"Spherical metallic shell external radius 6 cm, mass 6688 g, density 10.5 g/cm³. Thickness (π=22/7):", options:["2 cm","4 cm","2.5 cm","3 cm"], answer:0, hint:"Volume of metal = mass/density = (4/3)π(R³-r³)", exp:"Thickness = 2 cm"},
+  {q:"Right pyramid base is square of side 10 cm, height 10 cm. Lateral surface area is:", options:["100√5","100(√5+1)","50√5","100"], answer:0, hint:"Slant height of triangular face = √(h²+(side/2)²)", exp:"100√5 cm²"},
+  {q:"Right prism base is regular hexagon of side 5 cm, height 12√3 cm. Volume is:", options:["1800","675","1350","900"], answer:2, hint:"Area of regular hexagon = (3√3/2)a²", exp:"1350 cm³"},
+  {q:"Sum of radii of two spheres = 14 cm. Difference of surface areas = 112π. Ratio of volumes (larger:smaller):", options:["8:1","27:8","64:27","125:64"], answer:2, hint:"4π(R²-r²)=112π → R²-r²=28; R+r=14", exp:"R=8, r=6 → 512:216 = 64:27"},
+  {q:"Base area of right circular cone is 81π cm², height 12 cm. Curved surface area is:", options:["135π","144π","108π","126π"], answer:0, hint:"r=9, l=√(r²+h²)=15", exp:"πrl=135π"},
+  {q:"Solid metallic sphere radius 15 cm melted into spherical balls of radius 3 cm. Ratio of original SA to total SA of balls:", options:["1:10","5:27","1:5","3:40"], answer:2, hint:"No. of balls = (R/r)³", exp:"125 balls → SA ratio 1:5"},
+  {q:"Solid cylinder h=30 cm, diameter=10 cm. Two identical conical holes (r=5 cm, h=12 cm) drilled. Remaining surface area:", options:["430π","230π","120π","330π"], answer:0, hint:"Add lateral surfaces of cones, subtract the two circular bases removed", exp:"430π"},
+  {q:"Circumference of base of right circular cone = 44 cm, height = 24 cm. CSA (π=22/7):", options:["440","528","550","572"], answer:2, hint:"2πr=44 → r=7, l=25", exp:"πrl=550"},
+  // Additional standard CGL questions
+  {q:"A cubical tank can hold 729 litres of water. Length of each side (1 L = 1000 cm³) is:", options:["80 cm","90 cm","100 cm","110 cm"], answer:1, hint:"Side = ∛(volume in cm³)", exp:"∛729000 = 90 cm"},
+  {q:"Hemispherical bowl radius 10 cm emptied into cylinder of radius 5 cm. Height of water in cylinder:", options:["8 cm","10 cm","12 cm","16 cm"], answer:3, hint:"(2/3)πR³ = πr²h", exp:"h=16 cm"},
+  {q:"Metallic cylindrical rod r=1.5 cm, length 50 cm melted into spherical balls of r=0.75 cm. Number of balls:", options:["45","60","80","100"], answer:1, hint:"Volume cylinder / volume of one ball", exp:"60 balls"},
+  {q:"If each side of a square is increased by 10%, percentage increase in area is:", options:["20%","21%","22%","25%"], answer:1, hint:"(1.1)² - 1 = 0.21", exp:"21%"},
+  {q:"Diagonal of a square is 10√2 cm. Its area is:", options:["50","100","200","150"], answer:1, hint:"Diagonal = a√2 → a=10", exp:"100 cm²"},
+  {q:"Volume of a cuboid is 360 cm³. Length 6 cm, breadth 5 cm. Height is:", options:["10 cm","12 cm","8 cm","15 cm"], answer:1, hint:"V = l×b×h", exp:"h=12 cm"},
+  {q:"Radius of a sphere is decreased by 48%. Percentage decrease in surface area is closest to:", options:["72.96%","78.98%","82.91%","86.26%"], answer:0, hint:"SA ∝ r² → (0.52)² = 0.2704 → decrease 72.96%", exp:"72.96%"},
+  {q:"A solid metallic cuboid 18×36×72 cm is melted into 8 equal cubes. Ratio of TSA of cuboid to sum of LSA of 8 cubes:", options:["7:12","4:7","2:3","7:8"], answer:0, hint:"Find side of each cube first", exp:"7:12"},
+  {q:"Largest sphere that can be carved from a wooden cube of side 21 cm. Volume of sphere (π=22/7):", options:["4851","3851","6858","5821"], answer:0, hint:"Diameter of sphere = side of cube", exp:"4851 cm³"},
+  {q:"Right pyramid base is equilateral triangle of side 8 cm, height 360√3 cm. Volume is:", options:["360√3","480","360","240√3"], answer:1, hint:"V = (1/3)×base area×height", exp:"480 cm³"},
+  {q:"Two spheres radii in ratio 2:3. Ratio of their surface areas:", options:["4:9","2:3","8:27","4:6"], answer:0, hint:"SA ∝ r²", exp:"4:9"},
+  {q:"A cone and a cylinder have same radius and same height. Ratio of their volumes:", options:["1:3","1:2","2:3","3:1"], answer:0, hint:"Cone volume is 1/3 of cylinder", exp:"1:3"},
+  {q:"If the radius of a sphere is doubled, its volume becomes how many times?", options:["2","4","8","6"], answer:2, hint:"V ∝ r³", exp:"8 times"},
+  {q:"Curved surface area of a hemisphere is 2772 cm². Its radius (π=22/7):", options:["21 cm","14 cm","42 cm","7 cm"], answer:0, hint:"CSA of hemisphere = 2πr²", exp:"r=21 cm"},
+  {q:"A cylindrical tank radius 3.5 m, height 4 m is filled by a pipe of radius 7 cm at 2 m/s. Time to fill (minutes):", options:["55","60","65","70"], answer:1, hint:"Volume tank / (πr² × speed)", exp:"60 min"},
+  {q:"Area of a rhombus is 240 cm². One diagonal is 12 cm. Other diagonal is:", options:["20","30","40","25"], answer:2, hint:"Area = (1/2)×d1×d2", exp:"40 cm"},
+  {q:"Perimeter of a semicircular park of radius 14 m is:", options:["72","71","69","66"], answer:0, hint:"πr + 2r", exp:"72 m"},
+  {q:"A square field has area 1764 m². A rectangular park has width = 1/6 of side of square and length = 4 × width. Cost of levelling at ₹30/m²:", options:["6342","4768","5880","2940"], answer:2, hint:"Find side of square first", exp:"₹5880"},
+  {q:"Copper wire bent into square of area 81 cm². Same wire bent into semicircle. Radius of semicircle:", options:["7 cm","14 cm","3.5 cm","21 cm"], answer:0, hint:"Perimeter of square = perimeter of semicircle (πr+2r)", exp:"7 cm (approx with π=22/7)"},
+  {q:"Ratio of volumes of two cones is 64:125 and ratio of heights is 8:5. Ratio of their base areas:", options:["4:5","8:25","16:25","32:25"], answer:2, hint:"V ∝ r²h → r² ratio = (V ratio)/(h ratio)", exp:"16:25"},
+  {q:"Total surface area of a solid cube is 3456 cm². Its volume is:", options:["13824","12824","13884","12864"], answer:0, hint:"6a²=3456 → a=24 → a³", exp:"13824 cm³"},
+  {q:"A right circular cone diameter 14 cm, height 24 cm. Slant height is:", options:["25 cm","30 cm","35 cm","40 cm"], answer:0, hint:"l=√(r²+h²)", exp:"25 cm"},
+  {q:"Cylinder and cone have same base radius and same volume. Ratio of height of cylinder to height of cone:", options:["1:3","3:1","2:1","1:2"], answer:0, hint:"πr²h_cyl = (1/3)πr²h_cone", exp:"1:3"},
+  {q:"A solid hemisphere of radius 6 cm is immersed in a cylindrical vessel. Oil level rises by 2.5 cm. Radius of cylinder:", options:["6.29 cm","7.59 cm","8.79 cm","11.41 cm"], answer:1, hint:"(2/3)πR³ = πr² × rise", exp:"≈7.59 cm"},
+  {q:"Base of a right prism is square, height 10 cm, volume 160 cm³. Total surface area is:", options:["192","176","180","200"], answer:0, hint:"Find side of base first", exp:"192 cm²"},
+  {q:"From a solid cylindrical wooden block height 18 cm radius 7.5 cm a conical cavity of same height & radius is scooped out. Total surface area of remaining solid:", options:["326.25π","416.25π","472.5π","270π"], answer:1, hint:"CSA cylinder + CSA cone + base area of cylinder", exp:"416.25π"},
+  {q:"A metallic solid sphere of radius 3 cm is melted and recast into 3 spherical balls. Two have radii 2 cm and 1.5 cm. Surface area of third ball:", options:["(25/4)π","(25/2)π","25π","50π"], answer:1, hint:"Volume conservation → find third radius", exp:"(25/2)π"},
+  {q:"Circumference of base of cylindrical vessel is 158.4 cm, height 1 m. Capacity in litres (π=22/7, 1 decimal):", options:["198.2","186.4","199.6","200.8"], answer:0, hint:"2πr=158.4 → r, then V=πr²h convert to litres", exp:"198.2 L"},
+  {q:"If the radius of the base of a right circular cylinder is increased by 20% and height decreased by 30%, volume changes by:", options:["Decrease 2%","Increase 2%","Decrease 0.8%","Increase 0.8%"], answer:3, hint:"Already covered but good for practice", exp:"+0.8%"},
+  {q:"A right circular cone has radius 7 cm and slant height 25 cm. Total surface area is:", options:["704","616","528","440"], answer:0, hint:"TSA = πr(l+r)", exp:"704 cm² (π=22/7)"},
+  {q:"Volume of a hemisphere is 19404 cm³. Its radius (π=22/7) is:", options:["21 cm","14 cm","42 cm","7 cm"], answer:0, hint:"(2/3)πr³ = 19404", exp:"21 cm"},
+  {q:"A cube of side 6 cm is melted and recast into a cuboid of length 12 cm and breadth 9 cm. Height of cuboid is:", options:["1 cm","2 cm","3 cm","4 cm"], answer:1, hint:"Volume equal", exp:"2 cm"},
+  {q:"The diagonal of a cube is 6√3 cm. Its total surface area is:", options:["216","108","72","144"], answer:0, hint:"Diagonal = a√3 → a=6", exp:"6×36=216 cm²"},
+  {q:"A conical tent has height 14 m and base radius 10.5 m. Area of canvas required is:", options:["798","858","924","880"], answer:2, hint:"CSA = πrl, l=√(r²+h²)", exp:"924 m²"},
+  {q:"If the side of a cube is increased by 50%, its volume increases by what percent?", options:["125%","150%","237.5%","50%"], answer:2, hint:"(1.5)³ - 1 = 2.375", exp:"237.5%"},
+  {q:"A hollow sphere has external and internal radii 6 cm and 4 cm. Volume of material (π=22/7):", options:["1232/3","1232","616","308"], answer:0, hint:"(4/3)π(R³-r³)", exp:"1232/3 cm³"},
+  {q:"The ratio of the volumes of two spheres is 8:27. The ratio of their surface areas is:", options:["2:3","4:9","8:27","4:6"], answer:1, hint:"r ratio = 2:3 → SA ratio = 4:9", exp:"4:9"},
+  {q:"A cylindrical vessel of radius 14 cm contains water. A solid sphere of radius 7 cm is lowered into it. Rise in water level is:", options:["7/3 cm","14/3 cm","7/6 cm","7/2 cm"], answer:0, hint:"Volume of sphere = πr² × rise", exp:"7/3 cm"},
+  {q:"Base of a right prism is an equilateral triangle of side 8 cm and height of prism is 12 cm. Volume is:", options:["192√3","96√3","48√3","384√3"], answer:0, hint:"Area of equilateral triangle × height", exp:"192√3 cm³"},
+  {q:"A solid cylinder of radius 7 cm and height 14 cm is melted and recast into a cone of radius 7 cm. Height of cone is:", options:["42 cm","28 cm","21 cm","14 cm"], answer:0, hint:"Volumes equal", exp:"42 cm"},
+  {q:"The total surface area of a hemisphere is 462 cm². Its radius (π=22/7) is:", options:["7 cm","14 cm","21 cm","3.5 cm"], answer:0, hint:"TSA of hemisphere = 3πr²", exp:"7 cm"},
+  {q:"A rectangular park is 60 m long and 40 m wide. A path of uniform width 3 m runs around it inside. Area of path is:", options:["564 m²","588 m²","612 m²","636 m²"], answer:0, hint:"Outer area − inner area", exp:"564 m²"},
+  {q:"If the height of a cone is doubled and radius is halved, its volume becomes how many times the original?", options:["1/2","1","2","1/4"], answer:0, hint:"New V = (1/3)π(r/2)²(2h) = (1/2) original", exp:"Half"},
+  {q:"A cube has surface area 600 cm². Its volume is:", options:["1000","800","1200","900"], answer:0, hint:"6a²=600 → a=10", exp:"1000 cm³"},
+  {q:"The radii of two cylinders are in the ratio 2:3 and their heights are in the ratio 5:3. Ratio of their volumes:", options:["20:27","4:9","10:9","20:9"], answer:0, hint:"V ∝ r²h", exp:"20:27"},
+  {q:"A sector of a circle of radius 21 cm has angle 60°. Area of the sector (π=22/7) is:", options:["231","462","693","154"], answer:0, hint:"(θ/360)×πr²", exp:"231 cm²"},
+  {q:"A solid sphere is cut into two hemispheres. Ratio of total surface area of a hemisphere to that of the original sphere is:", options:["3:4","2:3","3:2","4:3"], answer:0, hint:"Hemisphere TSA=3πr², Sphere=4πr²", exp:"3:4"},
+  {q:"The base of a right pyramid is a square of side 10√2 cm and height is 12 cm. Volume is:", options:["800","400","600","1200"], answer:0, hint:"V=(1/3)×base area×h", exp:"800 cm³"},
+  {q:"A cylindrical road roller of diameter 1.4 m and length 2 m makes 10 revolutions. Area covered is:", options:["88 m²","44 m²","22 m²","176 m²"], answer:0, hint:"CSA × number of revolutions", exp:"88 m²"},
+  {q:"If the diameter of a sphere is increased by 100%, its surface area increases by what percent?", options:["100%","200%","300%","400%"], answer:2, hint:"r becomes 2r → SA becomes 4 times → +300%", exp:"300%"}
+];
+
+/* ========== QUIZ LOGIC ========== */
+let questions = [];
+let current = 0;
+let score = 0;
+let userAnswers = [];
+let timerInterval = null;
+let timeLeft = 80;
+let isPaused = false;
+
+const quizArea = document.getElementById('quizArea');
+const timerEl = document.getElementById('timer');
+const progressBar = document.getElementById('progressBar');
+const pauseBtn = document.getElementById('pauseBtn');
+
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+function startQuiz() {
+  questions = shuffle([...allQuestions]).slice(0, 60); // take 60 random
+  current = 0;
+  score = 0;
+  userAnswers = [];
+  loadQuestion();
+}
+
+function startTimer() {
+  timeLeft = 80;
+  timerEl.textContent = timeLeft;
+  timerEl.className = 'timer-box';
+  clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    if (isPaused) return;
+    timeLeft--;
+    timerEl.textContent = timeLeft;
+    if (timeLeft <= 15) timerEl.classList.add('danger');
+    else if (timeLeft <= 30) timerEl.classList.add('warning');
+    if (timeLeft <= 0) {
+      clearInterval(timerInterval);
+      selectOption(-1);
+      setTimeout(nextQuestion, 700);
+    }
+  }, 1000);
+}
+
+function togglePause() {
+  isPaused = !isPaused;
+  pauseBtn.textContent = isPaused ? 'Resume' : 'Pause';
+  if (!isPaused && timeLeft > 0) {
+    // timer already running
+  }
+}
+
+function loadQuestion() {
+  if (current >= questions.length) {
+    showResult();
+    return;
+  }
+  const q = questions[current];
+  progressBar.style.width = (current / questions.length * 100) + '%';
+  
+  let hintHTML = '';
+  if (q.hint) {
+    hintHTML = `
+      <div class="hint-box">
+        <details>
+          <summary>💡 Formula / Hint (click to expand)</summary>
+          <div class="hint-content">${q.hint}</div>
+        </details>
+      </div>`;
+  }
+
+  quizArea.innerHTML = `
+    <div class="card">
+      <div class="q-meta">Question ${current + 1} of ${questions.length}</div>
+      <div class="question">${q.q}</div>
+      ${hintHTML}
+      <div class="options">
+        ${q.options.map((opt, i) => 
+          `<div class="option" onclick="selectOption(${i})" id="opt${i}">${String.fromCharCode(97 + i)}) ${opt}</div>`
+        ).join('')}
+      </div>
+      <div class="btn-row">
+        <button class="action btn-next" id="nextBtn" disabled onclick="nextQuestion()">Next →</button>
+      </div>
+    </div>
+  `;
+  startTimer();
+  isPaused = false;
+  pauseBtn.textContent = 'Pause';
+}
+
+function selectOption(idx) {
+  if (userAnswers[current] !== undefined) return;
+  userAnswers[current] = idx;
+  clearInterval(timerInterval);
+  const q = questions[current];
+  
+  document.querySelectorAll('.option').forEach((el, i) => {
+    el.style.pointerEvents = 'none';
+    if (i === q.answer) el.classList.add('correct');
+    if (i === idx && idx !== q.answer) el.classList.add('incorrect');
+    if (i === idx) el.classList.add('selected');
+  });
+  
+  if (idx === q.answer) score++;
+  document.getElementById('nextBtn').disabled = false;
+}
+
+function nextQuestion() {
+  current++;
+  loadQuestion();
+}
+
+function showResult() {
+  clearInterval(timerInterval);
+  progressBar.style.width = '100%';
+  timerEl.textContent = '✓';
+  timerEl.className = 'timer-box';
+  
+  let reviewHTML = '';
+  questions.forEach((q, i) => {
+    const ua = userAnswers[i];
+    const isCorrect = ua === q.answer;
+    reviewHTML += `
+      <div class="review-item ${isCorrect ? 'correct' : 'incorrect'}">
+        <div class="status ${isCorrect ? 'correct' : 'incorrect'}">
+          ${isCorrect ? '✓ Correct' : '✗ Incorrect'}
+        </div>
+        <div><strong>Q${i+1}.</strong> ${q.q}</div>
+        <div style="margin-top:6px">Your answer: <em>${ua === -1 || ua === undefined ? 'Timed out / Skipped' : q.options[ua]}</em></div>
+        <div>Correct: <strong>${q.options[q.answer]}</strong></div>
+        <div style="font-size:0.88rem;color:#94a3b8;margin-top:4px">${q.exp || ''}</div>
+      </div>
+    `;
+  });
+
+  quizArea.innerHTML = `
+    <div class="card result">
+      <h2>Quiz Completed!</h2>
+      <div class="score">${score} / ${questions.length}</div>
+      <p style="font-size:1.2rem">${Math.round(score / questions.length * 100)}%</p>
+      <p style="color:#94a3b8;margin-top:8px">Excellent practice for SSC CGL Mensuration</p>
+      <div class="review">
+        <h3 style="margin-bottom:14px">Detailed Review</h3>
+        ${reviewHTML}
+      </div>
+      <button class="action btn-next" style="margin-top:24px" onclick="location.reload()">🔄 Restart (New Random Set)</button>
+    </div>
+  `;
+}
+
+// Launch
+startQuiz();
+</script>
+</body>
+</html>
