@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Profit Loss & Discount – Set 2 (20 Qs)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Profit Loss & Discount – Set 2 (Fixed)</title>
 <style>
 :root{--bg:#0f172a;--card:#1e293b;--accent:#0ea5e9;--text:#e2e8f0;--correct:#16a34a;--wrong:#dc2626;--warning:#f59e0b}
 *{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',system-ui,sans-serif}
@@ -15,7 +15,7 @@ body{background:var(--bg);color:var(--text);min-height:100vh;line-height:1.5}
 .timer-box.warning{background:var(--warning)}
 .timer-box.danger{background:var(--wrong);animation:pulse .7s infinite}
 @keyframes pulse{50%{transform:scale(1.08)}}
-.btn-pause{background:#475569;color:#fff;border:none;padding:7px 14px;border-radius:6px;font-weight:600;cursor:pointer;font-size:.9rem}
+.btn-pause{background:#475569;color:#fff;border:none;padding:7px 14px;border-radius:6px;font-weight:600;cursor:pointer}
 .progress{height:5px;background:#334155}
 .progress-bar{height:100%;background:linear-gradient(90deg,#0ea5e9,#38bdf8);transition:width .3s}
 .container{max-width:860px;margin:0 auto;padding:16px 12px 40px}
@@ -24,10 +24,10 @@ body{background:var(--bg);color:var(--text);min-height:100vh;line-height:1.5}
 .question{font-size:1.08rem;margin-bottom:18px}
 .hint-box{margin:12px 0}
 .hint-box details{background:#334155;border-radius:8px;padding:10px 14px;cursor:pointer}
-.hint-box summary{font-weight:600;color:#38bdf8;outline:none}
+.hint-box summary{font-weight:600;color:#38bdf8}
 .hint-content{margin-top:8px;font-size:.92rem;color:#cbd5e1}
 .options{display:grid;gap:10px}
-.option{background:#334155;border:2px solid transparent;padding:13px 15px;border-radius:10px;cursor:pointer;transition:.2s;font-size:.98rem}
+.option{background:#334155;border:2px solid transparent;padding:13px 15px;border-radius:10px;cursor:pointer;transition:.2s}
 .option:hover{background:#475569;border-color:var(--accent)}
 .option.selected{background:var(--accent);color:#0f172a;font-weight:600}
 .option.correct{background:var(--correct)!important;color:#fff}
@@ -50,7 +50,7 @@ button.action{padding:11px 24px;border:none;border-radius:8px;font-weight:700;cu
 </head>
 <body>
 <div class="header">
-  <div class="title">Profit, Loss & Discount • Set 2 (20 Qs)</div>
+  <div class="title">Profit, Loss & Discount • Set 2 (Fixed)</div>
   <div class="controls">
     <button class="btn-pause" id="pauseBtn" onclick="togglePause()">Pause</button>
     <div class="timer-box" id="timer">80</div>
@@ -58,30 +58,30 @@ button.action{padding:11px 24px;border:none;border-radius:8px;font-weight:700;cu
 </div>
 <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
 <div class="container"><div id="quizArea"></div></div>
-<div class="footer">Set 2 • Same difficulty as Abhinay PDF + SSC CGL pattern</div>
+<div class="footer">Correct answers mixed • No pattern</div>
 
 <script>
 const allQuestions = [
-  {q:"A man buys a cycle for Rs.1400 and sells it at a loss of 15%. What is the selling price of the cycle?", options:["Rs.1190","Rs.1160","Rs.1200","Rs.1225"], answer:0, hint:"SP = CP × (100 – Loss%)/100", exp:"1400 × 0.85 = 1190"},
-  {q:"By selling an article for Rs.720, a man loses 10%. At what price should he sell it to gain 20%?", options:["Rs.960","Rs.900","Rs.880","Rs.1000"], answer:0, hint:"First find CP, then new SP", exp:"CP = 720/0.9 = 800 → Desired SP = 800×1.2 = 960"},
-  {q:"A trader marks his goods at 25% above the cost price and allows a discount of 10%. His profit percent is:", options:["12.5%","15%","10%","12%"], answer:0, hint:"CP=100, MP=125, SP=112.5 → Profit 12.5%", exp:"12.5%"},
-  {q:"If the selling price of 16 articles is equal to the cost price of 20 articles, the profit percent is:", options:["25%","20%","15%","30%"], answer:0, hint:"SP of 16 = CP of 20 → Profit on 16 = CP of 4 → 25%", exp:"25%"},
-  {q:"A shopkeeper allows two successive discounts of 20% and 10% on an article marked at Rs.1500. The selling price is:", options:["Rs.1080","Rs.1100","Rs.1050","Rs.1125"], answer:0, hint:"Successive discount formula or stepwise", exp:"1500 × 0.8 × 0.9 = 1080"},
-  {q:"A person sells an article at a profit of 12%. If he had bought it at 10% less and sold it for Rs.18 more, he would have gained 40%. The cost price of the article is:", options:["Rs.150","Rs.180","Rs.200","Rs.120"], answer:0, hint:"Let CP = x. Form equation from both situations.", exp:"x = 150"},
-  {q:"A dishonest dealer sells goods at 10% loss on cost price but uses a weight of 800 g instead of 1 kg. His overall profit percent is:", options:["12.5%","10%","15%","8%"], answer:0, hint:"Effective CP for 800g goods sold as 1kg", exp:"(200/800)×100 – 10% adjustment ≈12.5%"},
-  {q:"The cost price of 20 articles is equal to the selling price of 16 articles. The gain percent is:", options:["25%","20%","15%","30%"], answer:0, hint:"Same logic as earlier question", exp:"25%"},
-  {q:"A man sold an article at a loss of 20%. If he had sold it for Rs.75 more, he would have gained 10%. The cost price of the article is:", options:["Rs.250","Rs.300","Rs.200","Rs.350"], answer:0, hint:"30% of CP = 75 → CP = 250", exp:"Rs.250"},
-  {q:"Successive discounts of 10%, 20% and 30% is equivalent to a single discount of:", options:["49.6%","50%","48%","52%"], answer:0, hint:"Calculate stepwise: 100×0.9×0.8×0.7", exp:"49.6%"},
-  {q:"A trader bought a number of articles for Rs.1200 and sold 2/3 of them at a profit of 20% and the remaining at a loss of 10%. Overall profit percent is:", options:["10%","8%","12%","15%"], answer:0, hint:"SP of 2/3 + SP of 1/3", exp:"10%"},
-  {q:"If an article is sold at 15% profit instead of 15% loss, the seller gets Rs.90 more. The cost price is:", options:["Rs.300","Rs.400","Rs.350","Rs.450"], answer:0, hint:"30% of CP = 90 → CP = 300", exp:"Rs.300"},
-  {q:"A shopkeeper marks an article 50% above the cost price and allows a discount of 20%. His profit percent is:", options:["20%","25%","30%","15%"], answer:0, hint:"CP=100, MP=150, SP=120 → 20%", exp:"20%"},
-  {q:"By selling 33 metres of cloth, a merchant gains the selling price of 11 metres. The gain percent is:", options:["50%","33.33%","25%","40%"], answer:0, hint:"Profit = SP of 11 on sale of 33 → SP of 33 = CP of 33 + SP of 11 → SP/CP = 3/2 → 50%", exp:"50%"},
-  {q:"A man buys two articles for Rs.2000 each. He sells one at 10% profit and the other at 10% loss. Overall profit or loss is:", options:["No profit no loss","Loss of Rs.20","Profit of Rs.20","Loss of Rs.40"], answer:0, hint:"Equal CP and equal % → no gain no loss", exp:"No profit no loss"},
-  {q:"The marked price of a watch is Rs.1600. A shopkeeper allows two successive discounts of 10% and 5%. The selling price is:", options:["Rs.1368","Rs.1400","Rs.1350","Rs.1420"], answer:0, hint:"1600 × 0.9 × 0.95", exp:"1368"},
-  {q:"A dealer sells an article at 20% profit. If the cost price is increased by 10% and the selling price is increased by Rs.40, the profit becomes 15%. Original cost price is:", options:["Rs.400","Rs.500","Rs.450","Rs.600"], answer:0, hint:"Form equation with original and new values", exp:"Rs.400"},
-  {q:"A fruit seller buys 100 oranges for Rs.400. He sells 40 of them at a profit of 20% and the remaining at a loss of 10%. Overall profit or loss percent is:", options:["2% profit","2% loss","4% profit","No profit no loss"], answer:0, hint:"Calculate total SP carefully", exp:"2% profit"},
-  {q:"If the cost price of 15 books is equal to the selling price of 12 books, the profit percent is:", options:["25%","20%","15%","30%"], answer:0, hint:"Profit on 12 = CP of 3 → 25%", exp:"25%"},
-  {q:"A shopkeeper sold an article at a loss of 12%. If he had sold it for Rs.72 more, he would have gained 6%. The cost price of the article is:", options:["Rs.400","Rs.450","Rs.500","Rs.360"], answer:0, hint:"18% of CP = 72 → CP = 400", exp:"Rs.400"}
+  {q:"A man buys a cycle for Rs.1400 and sells it at a loss of 15%. Selling price is:", options:["Rs.1160","Rs.1200","Rs.1190","Rs.1225"], answer:2, hint:"SP = CP × 0.85", exp:"1400 × 0.85 = 1190"},
+  {q:"By selling an article for Rs.720 a man loses 10%. To gain 20% he should sell at:", options:["Rs.900","Rs.960","Rs.880","Rs.1000"], answer:1, hint:"CP = 800", exp:"800 × 1.2 = 960"},
+  {q:"Trader marks goods 25% above CP and allows 10% discount. Profit % is:", options:["15%","10%","12.5%","12%"], answer:2, hint:"CP=100, MP=125, SP=112.5", exp:"12.5%"},
+  {q:"SP of 16 articles = CP of 20 articles. Profit percent is:", options:["20%","25%","15%","30%"], answer:1, hint:"Profit on 16 = CP of 4", exp:"25%"},
+  {q:"Two successive discounts of 20% and 10% on MP of Rs.1500. Selling price is:", options:["Rs.1100","Rs.1050","Rs.1080","Rs.1125"], answer:2, hint:"1500 × 0.8 × 0.9", exp:"1080"},
+  {q:"A person sells at 12% profit. If he bought at 10% less and sold for Rs.18 more, gain would be 40%. CP is:", options:["Rs.180","Rs.150","Rs.200","Rs.120"], answer:1, hint:"Form equation", exp:"Rs.150"},
+  {q:"Dishonest dealer sells at 10% loss on CP but uses 800 g weight for 1 kg. Overall gain % is:", options:["10%","15%","12.5%","8%"], answer:2, hint:"Effective calculation", exp:"12.5%"},
+  {q:"CP of 20 articles = SP of 16 articles. Gain % is:", options:["25%","20%","15%","30%"], answer:0, hint:"Profit on 16 = CP of 4", exp:"25%"},
+  {q:"Sold at 20% loss. If sold for Rs.75 more, would gain 10%. CP is:", options:["Rs.300","Rs.250","Rs.200","Rs.350"], answer:1, hint:"30% of CP = 75", exp:"Rs.250"},
+  {q:"Successive discounts of 10%, 20% and 30% equal single discount of:", options:["50%","48%","49.6%","52%"], answer:2, hint:"100 × 0.9 × 0.8 × 0.7", exp:"49.6%"},
+  {q:"Bought for Rs.1200. Sold 2/3 at 20% profit and remaining at 10% loss. Overall profit %:", options:["8%","12%","10%","15%"], answer:2, hint:"Calculate total SP", exp:"10%"},
+  {q:"Sells at 15% profit instead of 15% loss and gets Rs.90 more. CP is:", options:["Rs.400","Rs.350","Rs.300","Rs.450"], answer:2, hint:"30% of CP = 90", exp:"Rs.300"},
+  {q:"Marks 50% above CP and allows 20% discount. Profit % is:", options:["25%","20%","30%","15%"], answer:1, hint:"CP=100, MP=150, SP=120", exp:"20%"},
+  {q:"By selling 33 m cloth, gains SP of 11 m. Gain % is:", options:["33.33%","50%","25%","40%"], answer:1, hint:"SP of 33 = CP of 33 + SP of 11", exp:"50%"},
+  {q:"Bought two articles for Rs.2000 each. One sold at 10% profit, other at 10% loss. Overall:", options:["Loss of Rs.20","No profit no loss","Profit of Rs.20","Loss of Rs.40"], answer:1, hint:"Equal CP + equal opposite %", exp:"No profit no loss"},
+  {q:"MP = Rs.1600. Two successive discounts of 10% and 5%. SP is:", options:["Rs.1400","Rs.1350","Rs.1368","Rs.1420"], answer:2, hint:"1600 × 0.9 × 0.95", exp:"1368"},
+  {q:"Sells at 20% profit. CP increased by 10% and SP increased by Rs.40, profit becomes 15%. Original CP is:", options:["Rs.500","Rs.400","Rs.450","Rs.600"], answer:1, hint:"Form equation", exp:"Rs.400"},
+  {q:"Bought 100 oranges for Rs.400. Sold 40 at 20% profit and remaining at 10% loss. Overall result:", options:["2% loss","4% profit","2% profit","No profit no loss"], answer:2, hint:"Total SP calculation", exp:"2% profit"},
+  {q:"CP of 15 books = SP of 12 books. Profit % is:", options:["20%","25%","15%","30%"], answer:1, hint:"Profit on 12 = CP of 3", exp:"25%"},
+  {q:"Sold at 12% loss. If sold for Rs.72 more, would gain 6%. CP is:", options:["Rs.450","Rs.500","Rs.400","Rs.360"], answer:2, hint:"18% of CP = 72", exp:"Rs.400"}
 ];
 
 let questions=[],current=0,score=0,userAnswers=[],timerInterval=null,timeLeft=80,isPaused=false;
@@ -93,7 +93,7 @@ function togglePause(){isPaused=!isPaused;pauseBtn.textContent=isPaused?'Resume'
 function loadQuestion(){if(current>=questions.length){showResult();return}const q=questions[current];progressBar.style.width=(current/questions.length*100)+'%';let hintHTML=q.hint?`<div class="hint-box"><details><summary>💡 Formula / Hint</summary><div class="hint-content">${q.hint}</div></details></div>`:'';quizArea.innerHTML=`<div class="card"><div class="q-meta">Question ${current+1} of ${questions.length}</div><div class="question">${q.q}</div>${hintHTML}<div class="options">${q.options.map((opt,i)=>`<div class="option" onclick="selectOption(${i})" id="opt${i}">${String.fromCharCode(97+i)}) ${opt}</div>`).join('')}</div><div class="btn-row"><button class="action btn-next" id="nextBtn" disabled onclick="nextQuestion()">Next →</button></div></div>`;startTimer();isPaused=false;pauseBtn.textContent='Pause'}
 function selectOption(idx){if(userAnswers[current]!==undefined)return;userAnswers[current]=idx;clearInterval(timerInterval);const q=questions[current];document.querySelectorAll('.option').forEach((el,i)=>{el.style.pointerEvents='none';if(i===q.answer)el.classList.add('correct');if(i===idx&&idx!==q.answer)el.classList.add('incorrect');if(i===idx)el.classList.add('selected')});if(idx===q.answer)score++;document.getElementById('nextBtn').disabled=false}
 function nextQuestion(){current++;loadQuestion()}
-function showResult(){clearInterval(timerInterval);progressBar.style.width='100%';timerEl.textContent='✓';timerEl.className='timer-box';let reviewHTML='';questions.forEach((q,i)=>{const ua=userAnswers[i];const isCorrect=ua===q.answer;reviewHTML+=`<div class="review-item ${isCorrect?'correct':'incorrect'}"><div class="status ${isCorrect?'correct':'incorrect'}">${isCorrect?'✓ Correct':'✗ Incorrect'}</div><div><strong>Q${i+1}.</strong> ${q.q}</div><div style="margin-top:6px">Your answer: <em>${ua===-1||ua===undefined?'Timed out / Skipped':q.options[ua]}</em></div><div>Correct: <strong>${q.options[q.answer]}</strong></div><div style="font-size:.88rem;color:#94a3b8;margin-top:4px">${q.exp||''}</div></div>`});quizArea.innerHTML=`<div class="card result"><h2>Set 2 Completed!</h2><div class="score">${score} / ${questions.length}</div><p style="font-size:1.2rem">${Math.round(score/questions.length*100)}%</p><div class="review"><h3 style="margin-bottom:14px">Detailed Review</h3>${reviewHTML}</div><button class="action btn-next" style="margin-top:24px" onclick="location.reload()">🔄 Restart Set 2</button></div>`}
+function showResult(){clearInterval(timerInterval);progressBar.style.width='100%';timerEl.textContent='✓';timerEl.className='timer-box';let reviewHTML='';questions.forEach((q,i)=>{const ua=userAnswers[i];const isCorrect=ua===q.answer;reviewHTML+=`<div class="review-item ${isCorrect?'correct':'incorrect'}"><div class="status ${isCorrect?'correct':'incorrect'}">${isCorrect?'✓ Correct':'✗ Incorrect'}</div><div><strong>Q${i+1}.</strong> ${q.q}</div><div style="margin-top:6px">Your answer: <em>${ua===-1||ua===undefined?'Timed out':q.options[ua]}</em></div><div>Correct: <strong>${q.options[q.answer]}</strong></div><div style="font-size:.88rem;color:#94a3b8;margin-top:4px">${q.exp||''}</div></div>`});quizArea.innerHTML=`<div class="card result"><h2>Set 2 Completed!</h2><div class="score">${score}/${questions.length}</div><p>${Math.round(score/questions.length*100)}%</p><div class="review"><h3>Detailed Review</h3>${reviewHTML}</div><button class="action btn-next" style="margin-top:24px" onclick="location.reload()">🔄 Restart</button></div>`}
 startQuiz();
 </script>
 </body>
