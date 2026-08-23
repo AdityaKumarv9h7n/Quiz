@@ -58,7 +58,7 @@ button.action{padding:11px 24px;border:none;border-radius:8px;font-weight:700;cu
 </div>
 <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
 <div class="container"><div id="quizArea"></div></div>
-<div class="footer">Correct answers randomly placed • No more always option A</div>
+<div class="footer">Correct answers randomly placed • No fixed pattern</div>
 
 <script>
 const allQuestions = [
@@ -86,8 +86,26 @@ const allQuestions = [
 
 let questions=[],current=0,score=0,userAnswers=[],timerInterval=null,timeLeft=80,isPaused=false;
 const quizArea=document.getElementById('quizArea'),timerEl=document.getElementById('timer'),progressBar=document.getElementById('progressBar'),pauseBtn=document.getElementById('pauseBtn');
+
 function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
-function startQuiz(){questions=shuffle([...allQuestions]);current=0;score=0;userAnswers=[];loadQuestion()}
+
+// Shuffle a single question's options while keeping the correct answer text linked.
+// Produces a NEW question object with options reordered and `answer` remapped
+// to the new index of the correct option, so the correct choice lands in a random
+// position (a/b/c/d) each attempt instead of following a fixed pattern.
+function shuffleQuestionOptions(question){
+  const correctText = question.options[question.answer];
+  const optionIndices = shuffle(question.options.map((_,i)=>i));
+  const newOptions = optionIndices.map(i=>question.options[i]);
+  const newAnswer = newOptions.indexOf(correctText);
+  return {...question, options:newOptions, answer:newAnswer};
+}
+
+function startQuiz(){
+  const shuffledQuestions = shuffle([...allQuestions]);
+  questions = shuffledQuestions.map(shuffleQuestionOptions);
+  current=0;score=0;userAnswers=[];loadQuestion()
+}
 function startTimer(){timeLeft=80;timerEl.textContent=timeLeft;timerEl.className='timer-box';clearInterval(timerInterval);timerInterval=setInterval(()=>{if(isPaused)return;timeLeft--;timerEl.textContent=timeLeft;if(timeLeft<=15)timerEl.classList.add('danger');else if(timeLeft<=30)timerEl.classList.add('warning');if(timeLeft<=0){clearInterval(timerInterval);selectOption(-1);setTimeout(nextQuestion,700)}},1000)}
 function togglePause(){isPaused=!isPaused;pauseBtn.textContent=isPaused?'Resume':'Pause'}
 function loadQuestion(){if(current>=questions.length){showResult();return}const q=questions[current];progressBar.style.width=(current/questions.length*100)+'%';let hintHTML=q.hint?`<div class="hint-box"><details><summary>💡 Formula / Hint</summary><div class="hint-content">${q.hint}</div></details></div>`:'';quizArea.innerHTML=`<div class="card"><div class="q-meta">Question ${current+1} of ${questions.length}</div><div class="question">${q.q}</div>${hintHTML}<div class="options">${q.options.map((opt,i)=>`<div class="option" onclick="selectOption(${i})" id="opt${i}">${String.fromCharCode(97+i)}) ${opt}</div>`).join('')}</div><div class="btn-row"><button class="action btn-next" id="nextBtn" disabled onclick="nextQuestion()">Next →</button></div></div>`;startTimer();isPaused=false;pauseBtn.textContent='Pause'}
