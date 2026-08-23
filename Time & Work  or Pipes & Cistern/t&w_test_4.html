@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Time & Work / Pipes – Set 4</title>
+<style>
+:root{--bg:#0f172a;--card:#1e293b;--accent:#0ea5e9;--text:#e2e8f0;--correct:#16a34a;--wrong:#dc2626;--warning:#f59e0b}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',system-ui,sans-serif}
+body{background:var(--bg);color:var(--text);min-height:100vh;line-height:1.5}
+.header{background:#1e293b;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #334155;position:sticky;top:0;z-index:100;flex-wrap:wrap;gap:8px}
+.title{font-size:1.05rem;font-weight:700;color:var(--accent)}
+.controls{display:flex;align-items:center;gap:10px}
+.timer-box{background:var(--accent);color:#0f172a;font-weight:800;font-size:1.25rem;padding:6px 14px;border-radius:8px;min-width:70px;text-align:center}
+.timer-box.warning{background:var(--warning)}
+.timer-box.danger{background:var(--wrong);animation:pulse .7s infinite}
+@keyframes pulse{50%{transform:scale(1.08)}}
+.btn-pause{background:#475569;color:#fff;border:none;padding:7px 14px;border-radius:6px;font-weight:600;cursor:pointer}
+.progress{height:5px;background:#334155}
+.progress-bar{height:100%;background:linear-gradient(90deg,#0ea5e9,#38bdf8);transition:width .3s}
+.container{max-width:860px;margin:0 auto;padding:16px 12px 40px}
+.card{background:var(--card);border-radius:14px;padding:22px 18px;box-shadow:0 8px 25px rgba(0,0,0,.35)}
+.q-meta{color:#94a3b8;font-size:.85rem;margin-bottom:6px}
+.question{font-size:1.08rem;margin-bottom:18px}
+.hint-box{margin:12px 0}
+.hint-box details{background:#334155;border-radius:8px;padding:10px 14px;cursor:pointer}
+.hint-box summary{font-weight:600;color:#38bdf8}
+.hint-content{margin-top:8px;font-size:.92rem;color:#cbd5e1}
+.options{display:grid;gap:10px}
+.option{background:#334155;border:2px solid transparent;padding:13px 15px;border-radius:10px;cursor:pointer;transition:.2s}
+.option:hover{background:#475569;border-color:var(--accent)}
+.option.selected{background:var(--accent);color:#0f172a;font-weight:600}
+.option.correct{background:var(--correct)!important;color:#fff}
+.option.incorrect{background:var(--wrong)!important;color:#fff}
+.btn-row{margin-top:22px;display:flex;justify-content:flex-end}
+button.action{padding:11px 24px;border:none;border-radius:8px;font-weight:700;cursor:pointer}
+.btn-next{background:var(--accent);color:#0f172a}
+.btn-next:disabled{opacity:.45;cursor:not-allowed}
+.result{text-align:center}
+.score{font-size:2.8rem;font-weight:800;color:var(--accent);margin:12px 0}
+.review{text-align:left;margin-top:28px}
+.review-item{background:#334155;border-radius:10px;padding:14px;margin-bottom:12px;border-left:5px solid #64748b}
+.review-item.correct{border-left-color:var(--correct)}
+.review-item.incorrect{border-left-color:var(--wrong)}
+.status{font-weight:700;margin-bottom:4px}
+.status.correct{color:#4ade80}
+.status.incorrect{color:#f87171}
+.footer{text-align:center;padding:14px;color:#64748b;font-size:.8rem}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="title">Time & Work / Pipes • Set 4</div>
+  <div class="controls">
+    <button class="btn-pause" id="pauseBtn" onclick="togglePause()">Pause</button>
+    <div class="timer-box" id="timer">80</div>
+  </div>
+</div>
+<div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+<div class="container"><div id="quizArea"></div></div>
+<div class="footer">Final set of this chapter • Options shuffled</div>
+
+<script>
+const allQuestions = [
+  {q:"A can do a work in 18 days, B in 24 days. They work together for 6 days, then A leaves. B finishes remaining in:", options:["8 days","6 days","9 days","10 days"], answer:0, hint:"Work in 6 days + remaining by B", exp:"8 days"},
+  {q:"10 men complete a work in 24 days. After 8 days, 4 men left. Remaining work finished in:", options:["20 days","16 days","18 days","24 days"], answer:0, hint:"Work done + remaining by 6 men", exp:"20 days"},
+  {q:"A is 25% more efficient than B. Together they finish work in 16 days. A alone finishes in:", options:["28.8 days","25.6 days","32 days","20 days"], answer:0, hint:"Efficiency ratio 5:4", exp:"28.8 days"},
+  {q:"Two pipes fill tank in 9 hours and 12 hours. Both opened. After 3 hours faster closed. Remaining filled by slower in:", options:["5 hours","4 hours","6 hours","7 hours"], answer:0, hint:"Work in 3 hours + remaining", exp:"5 hours"},
+  {q:"A, B, C can do work in 8, 10, 40 days. They work 2 days, then C leaves. A and B finish remaining in:", options:["2.67 days","3 days","2 days","4 days"], answer:0, hint:"Work in 2 days + remaining rate", exp:"≈2.67 days"},
+  {q:"Pipe fills tank in 12 hours. Leak empties in 18 hours. Both open, tank fills in:", options:["36 hours","30 hours","24 hours","40 hours"], answer:0, hint:"1/12 – 1/18 = 1/36", exp:"36 hours"},
+  {q:"12 men complete work in 18 days. 18 women complete same in 12 days. 8 men + 12 women complete in:", options:["9 days","10 days","8 days","12 days"], answer:0, hint:"Find combined rate", exp:"9 days"},
+  {q:"A+B do work in 10 days, B+C in 12 days, C+A in 15 days. All three together take:", options:["7.5 days","8 days","6 days","9 days"], answer:0, hint:"Half of sum of pairs", exp:"7.5 days"},
+  {q:"Inlet fills in 5 hours, outlet empties in 7 hours. Both open, tank fills in:", options:["17.5 hours","15 hours","12 hours","20 hours"], answer:0, hint:"1/5 – 1/7", exp:"17.5 hours"},
+  {q:"A does work in 10 days, B in 15 days. Start together. After 4 days A leaves. B finishes remaining in:", options:["5 days","4 days","6 days","3 days"], answer:0, hint:"Work in 4 days + remaining by B", exp:"5 days"},
+  {q:"16 men work 7 hours/day to finish in 12 days. How many men working 8 hours/day needed for 14 days?", options:["12","10","14","16"], answer:0, hint:"M1D1H1 = M2D2H2", exp:"12 men"},
+  {q:"Pipe A fills in 6 hours, B empties in 9 hours. Both open 3 hours, then B closed. Remaining filled by A in:", options:["2 hours","1.5 hours","3 hours","2.5 hours"], answer:0, hint:"Net work + remaining by A", exp:"2 hours"},
+  {q:"A is 4 times as efficient as B. Together finish in 20 days. A alone finishes in:", options:["25 days","30 days","24 days","28 days"], answer:0, hint:"Efficiency 4:1 → A takes 25 days", exp:"25 days"},
+  {q:"Three pipes fill tank in 8, 12, 24 hours. All open. Time to fill 75% of tank:", options:["3 hours","2.5 hours","4 hours","3.5 hours"], answer:0, hint:"Combined rate × time = 0.75", exp:"3 hours"},
+  {q:"A+B do work in 8 days. A alone in 12 days. B alone in:", options:["24 days","20 days","16 days","18 days"], answer:0, hint:"1/B = 1/8 – 1/12", exp:"24 days"},
+  {q:"Tank filled by 3 pipes in 10, 15, 30 min. All open. After 3 min middle one closed. Remaining filled in:", options:["4.5 min","5 min","3.5 min","6 min"], answer:0, hint:"Work in 3 min + remaining by other two", exp:"4.5 min"},
+  {q:"10 men or 20 women complete work in 15 days. 5 men + 10 women complete in:", options:["15 days","12 days","10 days","18 days"], answer:0, hint:"Find combined rate", exp:"15 days"},
+  {q:"A finishes work in 30 days. Works 12 days and leaves. B finishes remaining in 15 days. B alone finishes whole in:", options:["25 days","20 days","30 days","18 days"], answer:0, hint:"Work by A + B's rate", exp:"25 days"},
+  {q:"Two pipes fill in 8 and 12 hours. Leak makes it take 1 hour extra when both open. Leak empties full tank in:", options:["24 hours","20 hours","30 hours","18 hours"], answer:0, hint:"Find leak rate", exp:"24 hours"},
+  {q:"A, B, C do work in 15, 20, 30 days. Start together. After 4 days A leaves. Remaining finished by B+C in:", options:["6 days","5 days","4 days","8 days"], answer:0, hint:"Work in 4 days + remaining by B+C", exp:"6 days"}
+];
+
+let questions=[],current=0,score=0,userAnswers=[],timerInterval=null,timeLeft=80,isPaused=false;
+const quizArea=document.getElementById('quizArea'),timerEl=document.getElementById('timer'),progressBar=document.getElementById('progressBar'),pauseBtn=document.getElementById('pauseBtn');
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function shuffleQuestionOptions(question){const correctText=question.options[question.answer];const optionIndices=shuffle(question.options.map((_,i)=>i));const newOptions=optionIndices.map(i=>question.options[i]);const newAnswer=newOptions.indexOf(correctText);return{...question,options:newOptions,answer:newAnswer}}
+function startQuiz(){const shuffledQuestions=shuffle([...allQuestions]);questions=shuffledQuestions.map(shuffleQuestionOptions);current=0;score=0;userAnswers=[];loadQuestion()}
+function startTimer(){timeLeft=80;timerEl.textContent=timeLeft;timerEl.className='timer-box';clearInterval(timerInterval);timerInterval=setInterval(()=>{if(isPaused)return;timeLeft--;timerEl.textContent=timeLeft;if(timeLeft<=15)timerEl.classList.add('danger');else if(timeLeft<=30)timerEl.classList.add('warning');if(timeLeft<=0){clearInterval(timerInterval);selectOption(-1);setTimeout(nextQuestion,700)}},1000)}
+function togglePause(){isPaused=!isPaused;pauseBtn.textContent=isPaused?'Resume':'Pause'}
+function loadQuestion(){if(current>=questions.length){showResult();return}const q=questions[current];progressBar.style.width=(current/questions.length*100)+'%';let hintHTML=q.hint?`<div class="hint-box"><details><summary>💡 Formula / Hint</summary><div class="hint-content">${q.hint}</div></details></div>`:'';quizArea.innerHTML=`<div class="card"><div class="q-meta">Question ${current+1} of ${questions.length}</div><div class="question">${q.q}</div>${hintHTML}<div class="options">${q.options.map((opt,i)=>`<div class="option" onclick="selectOption(${i})" id="opt${i}">${String.fromCharCode(97+i)}) ${opt}</div>`).join('')}</div><div class="btn-row"><button class="action btn-next" id="nextBtn" disabled onclick="nextQuestion()">Next →</button></div></div>`;startTimer();isPaused=false;pauseBtn.textContent='Pause'}
+function selectOption(idx){if(userAnswers[current]!==undefined)return;userAnswers[current]=idx;clearInterval(timerInterval);const q=questions[current];document.querySelectorAll('.option').forEach((el,i)=>{el.style.pointerEvents='none';if(i===q.answer)el.classList.add('correct');if(i===idx&&idx!==q.answer)el.classList.add('incorrect');if(i===idx)el.classList.add('selected')});if(idx===q.answer)score++;document.getElementById('nextBtn').disabled=false}
+function nextQuestion(){current++;loadQuestion()}
+function showResult(){clearInterval(timerInterval);progressBar.style.width='100%';timerEl.textContent='✓';timerEl.className='timer-box';let reviewHTML='';questions.forEach((q,i)=>{const ua=userAnswers[i];const isCorrect=ua===q.answer;reviewHTML+=`<div class="review-item ${isCorrect?'correct':'incorrect'}"><div class="status ${isCorrect?'correct':'incorrect'}">${isCorrect?'✓ Correct':'✗ Incorrect'}</div><div><strong>Q${i+1}.</strong> ${q.q}</div><div style="margin-top:6px">Your answer: <em>${ua===-1||ua===undefined?'Timed out':q.options[ua]}</em></div><div>Correct: <strong>${q.options[q.answer]}</strong></div><div style="font-size:.88rem;color:#94a3b8;margin-top:4px">${q.exp||''}</div></div>`});quizArea.innerHTML=`<div class="card result"><h2>Set 4 Completed!</h2><div class="score">${score}/${questions.length}</div><p>${Math.round(score/questions.length*100)}%</p><div class="review"><h3>Detailed Review</h3>${reviewHTML}</div><button class="action btn-next" style="margin-top:24px" onclick="location.reload()">🔄 Restart</button></div>`}
+startQuiz();
+</script>
+</body>
+</html>
